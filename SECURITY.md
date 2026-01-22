@@ -1,83 +1,83 @@
 # Security Policy
 
-## 🔒 Gestione Informazioni Sensibili
+## 🔒 Sensitive Information Management
 
-### Dati che NON devono MAI essere committati su Git:
+### Data that MUST NEVER be committed to Git:
 
-1. **Configurazione HSM**
-   - Indirizzi IP degli HSM
-   - Porte di comunicazione
-   - Credenziali di accesso
-   - Token di autenticazione
+1. **HSM Configuration**
+   - HSM IP addresses
+   - Communication ports
+   - Access credentials
+   - Authentication tokens
 
-2. **Materiale Crittografico**
-   - Chiavi crittografiche (KEK, DEK, etc.)
-   - Key Blocks TR-31
+2. **Cryptographic Material**
+   - Cryptographic keys (KEK, DEK, etc.)
+   - TR-31 Key Blocks
    - Check values
    - Key Components
 
-3. **Dati di Output**
-   - File CSV generati con chiavi
-   - Log con informazioni sensibili
-   - Backup di configurazioni
+3. **Output Data**
+   - CSV files generated with keys
+   - Logs with sensitive information
+   - Configuration backups
 
-## ✅ File Safe da Committare
+## ✅ Safe Files to Commit
 
-- Codice sorgente (HSM-manager.py)
-- File di esempio (hsm_config.example.json)
-- Documentazione (README.md, SECURITY.md)
-- Template CSV vuoti
+- Source code (HSM-manager.py)
+- Example files (hsm_config.example.json)
+- Documentation (README.md, SECURITY.md)
+- Empty CSV templates
 - .gitignore
 
 ## 🛡️ Best Practices
 
-### Prima di ogni Commit
+### Before Every Commit
 
-1. **Verifica .gitignore**
+1. **Verify .gitignore**
    ```bash
    git status
    ```
-   Assicurati che `hsm_config.json` non appaia nella lista
+   Ensure `hsm_config.json` doesn't appear in the list
 
-2. **Scan per dati sensibili**
+2. **Scan for sensitive data**
    ```bash
-   grep -r "172\." .  # Cerca IP privati
+   grep -r "172\." .  # Search for private IPs
    grep -r "192\.168\." .
    grep -r "10\." .
    ```
 
-3. **Controlla le stringhe hardcoded**
-   - Nessun IP dovrebbe essere nel codice
-   - Nessuna password nel codice
-   - Nessuna chiave nel codice
+3. **Check hardcoded strings**
+   - No IPs should be in the code
+   - No passwords in the code
+   - No keys in the code
 
-### Durante lo Sviluppo
+### During Development
 
-1. **Usa sempre file di configurazione esterni**
-   - Mai hardcodare configurazioni sensibili
-   - Usa variabili d'ambiente quando possibile
-   - Fornisci sempre file .example
+1. **Always use external configuration files**
+   - Never hardcode sensitive configurations
+   - Use environment variables when possible
+   - Always provide .example files
 
 2. **Logging**
-   - NON loggare materiale crittografico
-   - NON loggare chiavi o componenti
-   - Oscura dati sensibili nei log
+   - DO NOT log cryptographic material
+   - DO NOT log keys or components
+   - Obscure sensitive data in logs
 
-3. **File temporanei**
-   - Pulisci file temporanei prima del commit
-   - Aggiungi pattern al .gitignore
+3. **Temporary files**
+   - Clean temporary files before commit
+   - Add patterns to .gitignore
 
-### Gestione Configurazione
+### Configuration Management
 
 ```json
-// ✅ CORRETTO - hsm_config.example.json (da committare)
+// ✅ CORRECT - hsm_config.example.json (to commit)
 {
   "hsm_ip": "YOUR_HSM_IP_HERE",
   "hsm_port": 1500,
   "debug_mode": false
 }
 
-// ❌ SBAGLIATO - Non committare configurazioni reali!
+// ❌ WRONG - Don't commit real configurations!
 {
   "hsm_ip": "172.29.71.101",
   "hsm_port": 1500,
@@ -85,103 +85,103 @@
 }
 ```
 
-## 🚨 Cosa Fare in Caso di Leak
+## 🚨 What to Do in Case of Leak
 
-Se hai accidentalmente committato dati sensibili:
+If you accidentally committed sensitive data:
 
-### 1. NON fare solo un nuovo commit
-Un semplice commit di rimozione non elimina i dati dalla history di Git!
+### 1. DO NOT just make a new commit
+A simple removal commit doesn't delete data from Git history!
 
-### 2. Rimuovi dalla history
+### 2. Remove from history
 ```bash
-# Per file specifici
+# For specific files
 git filter-branch --force --index-filter \
   "git rm --cached --ignore-unmatch hsm_config.json" \
   --prune-empty --tag-name-filter cat -- --all
 
-# Forza il push
+# Force push
 git push origin --force --all
 ```
 
-### 3. Ruota le credenziali
-- Cambia IP dell'HSM se esposto
-- Notifica il team di sicurezza
-- Aggiorna i firewall se necessario
-- Ruota eventuali chiavi compromesse
+### 3. Rotate credentials
+- Change HSM IP if exposed
+- Notify security team
+- Update firewalls if necessary
+- Rotate any compromised keys
 
-### 4. Notifica
-- Informa il responsabile della sicurezza
-- Documenta l'incidente
-- Implementa misure preventive
+### 4. Notification
+- Inform security manager
+- Document the incident
+- Implement preventive measures
 
-## 🔍 Tools di Verifica
+## 🔍 Verification Tools
 
 ### Git-secrets
 ```bash
-# Installa git-secrets
+# Install git-secrets
 brew install git-secrets  # macOS
 apt-get install git-secrets  # Linux
 
-# Configura per il repository
+# Configure for repository
 git secrets --install
-git secrets --register-aws  # Per chiavi AWS
-git secrets --add '172\.[0-9]+\.[0-9]+\.[0-9]+'  # IP privati
+git secrets --register-aws  # For AWS keys
+git secrets --add '172\.[0-9]+\.[0-9]+\.[0-9]+'  # Private IPs
 ```
 
 ### Gitleaks
 ```bash
-# Installa gitleaks
+# Install gitleaks
 brew install gitleaks  # macOS
 
-# Scansiona il repository
+# Scan repository
 gitleaks detect --source . --verbose
 ```
 
 ### Pre-commit Hook
 
-Crea `.git/hooks/pre-commit`:
+Create `.git/hooks/pre-commit`:
 
 ```bash
 #!/bin/bash
 
-# Blocca commit di hsm_config.json
+# Block commit of hsm_config.json
 if git diff --cached --name-only | grep -q "hsm_config.json"; then
-    echo "❌ ERRORE: Tentativo di commit di hsm_config.json!"
-    echo "Questo file contiene informazioni sensibili."
+    echo "❌ ERROR: Attempt to commit hsm_config.json!"
+    echo "This file contains sensitive information."
     exit 1
 fi
 
-# Cerca IP privati nel codice
+# Search for private IPs in code
 if git diff --cached | grep -qE "172\.[0-9]+\.[0-9]+\.[0-9]+"; then
-    echo "❌ ERRORE: Rilevato IP privato nel codice!"
+    echo "❌ ERROR: Private IP detected in code!"
     exit 1
 fi
 
 exit 0
 ```
 
-Rendi eseguibile:
+Make executable:
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
 
-## 📋 Checklist Prima del Push
+## 📋 Pre-Push Checklist
 
-- [ ] `hsm_config.json` è nel .gitignore
-- [ ] Nessun IP hardcoded nel codice
-- [ ] Nessuna password o credenziale nel codice
-- [ ] File .example sono aggiornati
-- [ ] README è completo e aggiornato
-- [ ] Test di sicurezza eseguiti
-- [ ] Log review completata
+- [ ] `hsm_config.json` is in .gitignore
+- [ ] No hardcoded IPs in code
+- [ ] No passwords or credentials in code
+- [ ] .example files are updated
+- [ ] README is complete and updated
+- [ ] Security tests executed
+- [ ] Log review completed
 
-## 📞 Contatti Sicurezza
+## 📞 Security Contacts
 
-In caso di dubbi o problemi di sicurezza:
-- [Inserire contatto team security]
-- [Inserire email security@]
+In case of doubts or security issues:
+- [Insert security team contact]
+- [Insert security@ email]
 
-## 📚 Riferimenti
+## 📚 References
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [PCI DSS Requirements](https://www.pcisecuritystandards.org/)

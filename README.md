@@ -1,30 +1,30 @@
-# HSM Manager - GUI per PayShield
+# HSM Manager - GUI for PayShield
 
-Tool unificato per la gestione di HSM PayShield con interfaccia web.
+Unified tool for PayShield HSM management with web interface.
 
-## ⚠️ IMPORTANTE - SICUREZZA
+## ⚠️ IMPORTANT - SECURITY
 
-**NON committare mai il file `hsm_config.json` su Git!**
+**NEVER commit the `hsm_config.json` file to Git!**
 
-Questo file contiene informazioni sensibili sulla configurazione HSM (indirizzi IP, porte, ecc.) e **DEVE** rimanere locale.
+This file contains sensitive HSM configuration information (IP addresses, ports, etc.) and **MUST** remain local.
 
-## 🚀 Setup Iniziale
+## 🚀 Initial Setup
 
-### 1. Clona il repository
+### 1. Clone the repository
 ```bash
 git clone <your-repo-url>
 cd hsm_manager
 ```
 
-### 2. Crea il file di configurazione
+### 2. Create configuration file
 
-Copia il file di esempio e modifica con i tuoi dati:
+Copy the example file and modify with your data:
 
 ```bash
 cp hsm_config.example.json hsm_config.json
 ```
 
-Modifica `hsm_config.json` con i parametri del tuo HSM:
+Edit `hsm_config.json` with your HSM parameters:
 
 ```json
 {
@@ -35,120 +35,120 @@ Modifica `hsm_config.json` con i parametri del tuo HSM:
 }
 ```
 
-**Parametri:**
-- `hsm_ip`: Indirizzo IP del tuo HSM PayShield
-- `hsm_port`: Porta di comunicazione (default: 1500)
-- `output_path`: Directory per i file di output
-- `debug_mode`: Abilita logging dettagliato (true/false)
+**Parameters:**
+- `hsm_ip`: IP address of your PayShield HSM
+- `hsm_port`: Communication port (default: 1500)
+- `output_path`: Directory for output files
+- `debug_mode`: Enable detailed logging (true/false)
 
-### 3. Installa le dipendenze
+### 3. Install dependencies
 
-Questo tool usa solo librerie Python standard, non sono necessarie dipendenze aggiuntive.
+This tool uses only Python standard libraries, no additional dependencies required.
 
-### 4. Avvia il server
+### 4. Start the server
 
 ```bash
 python3 HSM-manager.py
 ```
 
-Il server si avvierà su `http://localhost:8080` e aprirà automaticamente il browser.
+The server will start on `http://localhost:8080` and automatically open your browser.
 
-## 📋 Funzionalità
+## 📋 Features
 
 ### Key Generation
-- Generazione di chiavi crittografiche
-- Supporto per vari algoritmi (AES, DES, TDES)
-- Configurazione flessibile dei parametri delle chiavi
-- Import/Export da file CSV
+- Cryptographic key generation
+- Support for various algorithms (AES, DES, TDES)
+- Flexible key parameter configuration
+- CSV Import/Export
 
 ### Key Import/Export
-- Import di chiavi esistenti
-- Export di chiavi in formato TR-31
-- Gestione Key Blocks
-- Supporto per multiple operazioni batch
+- Import existing keys
+- Export keys in TR-31 format
+- Key Block management
+- Batch operations support
 
 ### Key Block Analysis
-- Parser per Key Blocks TR-31/X9.143
-- Analisi dettagliata dei componenti
-- Visualizzazione header e optional blocks
+- TR-31/X9.143 Key Block parser
+- Detailed component analysis
+- Header and optional blocks visualization
 
 ### HSM Monitoring
-- Monitoraggio carico HSM in tempo reale
-- Statistiche comandi eseguiti
-- Dashboard di stato
+- Real-time HSM load monitoring
+- Command execution statistics
+- Status dashboard
 
-## 🔒 Considerazioni di Sicurezza
+## 🔒 Security Considerations
 
-1. **File di configurazione**: Il file `hsm_config.json` contiene informazioni sensibili e NON deve essere condiviso
-2. **Debug mode**: In produzione, mantenere `debug_mode: false`
-3. **Output files**: I file generati potrebbero contenere materiale crittografico sensibile
-4. **Accesso HSM**: Assicurarsi che solo utenti autorizzati possano eseguire questo tool
-5. **Network**: Il tool si connette direttamente all'HSM, verificare le policy di rete
+1. **Configuration file**: The `hsm_config.json` file contains sensitive information and MUST NOT be shared
+2. **Debug mode**: In production, keep `debug_mode: false`
+3. **Output files**: Generated files may contain sensitive cryptographic material
+4. **HSM access**: Ensure only authorized users can run this tool
+5. **Network**: This tool connects directly to the HSM, verify network policies
 
-## 📁 Struttura File
+## 📁 File Structure
 
 ```
 hsm_manager/
-├── HSM-manager.py              # Script principale
-├── hsm_config.example.json     # Template configurazione (da committare)
-├── hsm_config.json             # Configurazione reale (NON committare)
-├── .gitignore                  # Esclude file sensibili
-└── README.md                   # Questo file
+├── HSM-manager.py              # Main script
+├── hsm_config.example.json     # Configuration template (commit this)
+├── hsm_config.json             # Real configuration (DO NOT commit)
+├── .gitignore                  # Excludes sensitive files
+└── README.md                   # This file
 ```
 
-## 🛠️ Requisiti
+## 🛠️ Requirements
 
 - Python 3.6+
-- Accesso di rete all'HSM PayShield
-- Sistema operativo: Linux/macOS/Windows
+- Network access to PayShield HSM
+- Operating System: Linux/macOS/Windows
 
-## 📝 Template CSV
+## 📝 CSV Templates
 
-Il tool include template CSV per:
-- Generazione chiavi: `Download Template` nella sezione Key Generation
-- Import chiavi: `Download Template` nella sezione Key Import
-- Export chiavi: `Download Template` nella sezione Key Export
+The tool includes CSV templates for:
+- Key generation: `Download Template` in Key Generation section
+- Key import: `Download Template` in Key Import section
+- Key export: `Download Template` in Key Export section
 
-## ⚙️ Configurazione Avanzata
+## ⚙️ Advanced Configuration
 
 ### Custom Port
-Per usare una porta diversa dalla 8080:
+To use a different port than 8080:
 
 ```python
-# Modifica l'ultima riga in HSM-manager.py
+# Modify the last line in HSM-manager.py
 if __name__ == "__main__":
-    start_server(8081)  # Usa la porta 8081
+    start_server(8081)  # Use port 8081
 ```
 
-### Output Path Personalizzato
-Modifica `output_path` in `hsm_config.json` per cambiare la directory di output.
+### Custom Output Path
+Modify `output_path` in `hsm_config.json` to change the output directory.
 
 ## 🐛 Troubleshooting
 
-### Errore "Configuration file not found"
-Assicurati di aver creato `hsm_config.json` da `hsm_config.example.json`.
+### Error "Configuration file not found"
+Make sure you created `hsm_config.json` from `hsm_config.example.json`.
 
-### Errore di connessione HSM
-Verifica:
-- IP e porta dell'HSM nel file di configurazione
-- Connettività di rete verso l'HSM
-- Firewall e regole di sicurezza
+### HSM connection error
+Verify:
+- HSM IP and port in configuration file
+- Network connectivity to the HSM
+- Firewall and security rules
 
-### Il browser non si apre automaticamente
-Apri manualmente: `http://localhost:8080`
+### Browser doesn't open automatically
+Open manually: `http://localhost:8080`
 
-## 📄 Licenza
+## 📄 License
 
-[Specificare la licenza appropriata]
+[Specify appropriate license]
 
-## 👥 Contributi
+## 👥 Contributing
 
-[Istruzioni per contribuire al progetto]
+[Instructions for contributing to the project]
 
-## 📞 Supporto
+## 📞 Support
 
-[Informazioni di contatto o issue tracking]
+[Contact information or issue tracking]
 
 ---
 
-**Versione:** 2.1.0.0
+**Version:** 2.1.0.0

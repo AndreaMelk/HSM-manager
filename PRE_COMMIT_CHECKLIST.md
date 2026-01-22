@@ -1,154 +1,154 @@
-# 📋 Checklist Pre-Commit su Git
+# 📋 Pre-Commit Checklist for Git
 
-Usa questa checklist prima di ogni push su Git per assicurarti che il codice sia sicuro.
+Use this checklist before every Git push to ensure the code is secure.
 
-## ✅ Controlli Obbligatori
+## ✅ Mandatory Checks
 
-### 1. File di Configurazione
-- [ ] `hsm_config.json` NON è nell'area di stage
+### 1. Configuration Files
+- [ ] `hsm_config.json` is NOT in staging area
   ```bash
   git status
-  # hsm_config.json NON deve apparire in "Changes to be committed"
+  # hsm_config.json MUST NOT appear in "Changes to be committed"
   ```
-- [ ] `hsm_config.example.json` è presente e aggiornato
-- [ ] `.gitignore` contiene `hsm_config.json`
+- [ ] `hsm_config.example.json` is present and updated
+- [ ] `.gitignore` contains `hsm_config.json`
 
-### 2. Codice Sorgente
-- [ ] Nessun IP hardcoded nel codice
+### 2. Source Code
+- [ ] No hardcoded IPs in code
   ```bash
   grep -r "172\." *.py
   grep -r "192\.168\." *.py
   grep -r "10\." *.py
-  # Se trova qualcosa, verifica che sia solo nei commenti o esempi
+  # If found, verify it's only in comments or examples
   ```
-- [ ] Nessuna password o credenziale
+- [ ] No passwords or credentials
   ```bash
   grep -ri "password.*=.*['\"]" *.py
   grep -ri "token.*=.*['\"]" *.py
   ```
-- [ ] Nessuna chiave crittografica
+- [ ] No cryptographic keys
   ```bash
-  # Le chiavi hanno pattern tipici
+  # Keys have typical patterns
   grep -E "[A-F0-9]{32,}" *.py
   ```
 
-### 3. Documentazione
-- [ ] README.md è aggiornato con le istruzioni corrette
-- [ ] SECURITY.md riflette le policy attuali
-- [ ] Commenti nel codice non contengono info sensibili
+### 3. Documentation
+- [ ] README.md is updated with correct instructions
+- [ ] SECURITY.md reflects current policies
+- [ ] Code comments don't contain sensitive info
 
-### 4. File di Output
-- [ ] Directory `hsm_output/` non è tracciata
-- [ ] File `.csv` generati non sono nell'area di stage
-- [ ] File `.log` non sono tracciati
+### 4. Output Files
+- [ ] Directory `hsm_output/` is not tracked
+- [ ] Generated `.csv` files are not in staging area
+- [ ] `.log` files are not tracked
 
-## 🔍 Comandi di Verifica Rapida
+## 🔍 Quick Verification Commands
 
-### Scansione Completa
+### Complete Scan
 ```bash
-# Controlla tutti i file in stage
+# Check all staged files
 git diff --cached
 
-# Lista file da committare
+# List files to commit
 git status
 
-# Cerca pattern sensibili
+# Search for sensitive patterns
 git diff --cached | grep -E "(172\.|192\.168\.|10\.)[0-9]+"
 git diff --cached | grep -Ei "(password|token|secret|api[_-]?key)\s*[:=]"
 ```
 
 ### Test Pre-Commit Hook
 ```bash
-# Installa il pre-commit hook
+# Install pre-commit hook
 cp pre-commit.example .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 
-# Il hook verrà eseguito automaticamente ad ogni commit
+# Hook will run automatically on every commit
 git commit -m "test"
 ```
 
-## 🚨 Se Trovi Problemi
+## 🚨 If You Find Issues
 
-### IP Hardcoded
-1. Sposta l'IP in `hsm_config.json`
-2. Aggiorna il codice per leggere da configurazione
-3. Verifica che funzioni con IP da file
+### Hardcoded IP
+1. Move IP to `hsm_config.json`
+2. Update code to read from configuration
+3. Verify it works with IP from file
 
-### File Sensibili in Stage
+### Sensitive Files in Stage
 ```bash
-# Rimuovi file dallo stage
+# Remove file from stage
 git reset HEAD hsm_config.json
 
-# Se già committato (NON pushato)
+# If already committed (NOT pushed)
 git reset --soft HEAD~1
 git reset HEAD hsm_config.json
 git commit
 ```
 
-### Credenziali Esposte
-1. Rimuovi le credenziali dal codice
-2. Usa variabili d'ambiente o file di config
-3. Aggiorna la documentazione
+### Exposed Credentials
+1. Remove credentials from code
+2. Use environment variables or config file
+3. Update documentation
 
-## 📦 Prima del Push Finale
+## 📦 Before Final Push
 
 ```bash
-# 1. Verifica branch
+# 1. Verify branch
 git branch
-# Assicurati di essere sul branch corretto
+# Make sure you're on the correct branch
 
-# 2. Verifica history
+# 2. Verify history
 git log --oneline -5
-# Controlla che non ci siano commit sospetti
+# Check for suspicious commits
 
-# 3. Review finale
+# 3. Final review
 git diff origin/main..HEAD
-# Review di TUTTI i cambiamenti che stai per pushare
+# Review ALL changes you're about to push
 
-# 4. Test finale
+# 4. Final test
 python3 HSM-manager.py
-# Assicurati che funzioni con hsm_config.json
+# Ensure it works with hsm_config.json
 
 # 5. Push
 git push origin main
 ```
 
-## ✨ Best Practices Continuative
+## ✨ Continuous Best Practices
 
-### Ogni Settimana
-- [ ] Review dei commit della settimana
-- [ ] Verifica che .gitignore sia efficace
-- [ ] Controlla che nessun file sensibile sia finito su Git
+### Every Week
+- [ ] Review week's commits
+- [ ] Verify .gitignore is effective
+- [ ] Check no sensitive files ended up in Git
 
-### Ogni Mese
-- [ ] Audit completo del repository
-- [ ] Aggiorna la documentazione
-- [ ] Review delle policy di sicurezza
+### Every Month
+- [ ] Complete repository audit
+- [ ] Update documentation
+- [ ] Review security policies
 
-### Dopo Modifiche Maggiori
-- [ ] Test completo dell'applicazione
-- [ ] Verifica che hsm_config.example.json sia aggiornato
-- [ ] Update del README con nuove features
+### After Major Changes
+- [ ] Complete application test
+- [ ] Verify hsm_config.example.json is updated
+- [ ] Update README with new features
 
-## 📞 In Caso di Dubbi
+## 📞 When in Doubt
 
-Se non sei sicuro:
-1. **NON fare il push**
-2. Chiedi review al team
-3. Verifica con il security team
-4. Meglio essere prudenti che rischiare
+If you're unsure:
+1. **DO NOT push**
+2. Ask team for review
+3. Verify with security team
+4. Better to be cautious than risk exposure
 
-## 🎯 Comando Rapido di Verifica
+## 🎯 Quick Security Check Command
 
-Copia-incolla questo prima di ogni commit:
+Copy-paste this before every commit:
 
 ```bash
 echo "🔍 Security Check..." && \
 git status | grep -q "hsm_config.json" && echo "❌ hsm_config.json in stage!" || \
-(git diff --cached | grep -qE "(172\.|192\.168\.|10\.)[0-9]+" && echo "❌ IP trovato!" || \
-echo "✅ Sembra OK!")
+(git diff --cached | grep -qE "(172\.|192\.168\.|10\.)[0-9]+" && echo "❌ IP found!" || \
+echo "✅ Looks OK!")
 ```
 
 ---
 
-**Ricorda**: La sicurezza è responsabilità di tutti. Un minuto di controllo ora può evitare ore di problemi dopo!
+**Remember**: Security is everyone's responsibility. A minute of checking now can prevent hours of problems later!

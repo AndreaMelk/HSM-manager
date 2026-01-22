@@ -1,33 +1,33 @@
-# 📝 Modifiche Apportate per la Pubblicazione su Git
+# 📝 Changes Made for Git Publication
 
-## 🔧 Modifiche al Codice
+## 🔧 Code Modifications
 
 ### File: HSM-manager.py
 
-#### 1. Rimosso IP Hardcoded (CRITICO)
-**Prima (PERICOLOSO):**
+#### 1. Removed Hardcoded IP (CRITICAL)
+**Before (DANGEROUS):**
 ```python
 def __init__(self):
     # ...
-    self.hsm_ip = "172.29.71.101"  # ❌ IP esposto pubblicamente!
+    self.hsm_ip = "172.29.71.101"  # ❌ Publicly exposed IP!
     self.hsm_port = 1500
     self.output_path = os.path.expanduser("~/hsm_output")
     self.debug_mode = True
 ```
 
-**Dopo (SICURO):**
+**After (SECURE):**
 ```python
 def __init__(self, config_file='hsm_config.json'):
     # ...
-    self.load_config(config_file)  # ✅ Carica da file esterno
+    self.load_config(config_file)  # ✅ Load from external file
 ```
 
-#### 2. Aggiunto Metodo load_config()
-Nuovo metodo che:
-- Legge configurazione da file JSON esterno
-- Valida i parametri obbligatori
-- Gestisce errori in modo appropriato
-- Fornisce messaggi di errore utili
+#### 2. Added load_config() Method
+New method that:
+- Reads configuration from external JSON file
+- Validates mandatory parameters
+- Handles errors appropriately
+- Provides helpful error messages
 
 ```python
 def load_config(self, config_file):
@@ -55,10 +55,10 @@ def load_config(self, config_file):
         raise ValueError("hsm_ip must be configured in hsm_config.json")
 ```
 
-## 📁 Nuovi File Aggiunti
+## 📁 New Files Added
 
-### 1. hsm_config.example.json ✅ Da Committare
-File di esempio con placeholder:
+### 1. hsm_config.example.json ✅ To Commit
+Example file with placeholders:
 ```json
 {
   "hsm_ip": "YOUR_HSM_IP_HERE",
@@ -68,64 +68,64 @@ File di esempio con placeholder:
 }
 ```
 
-### 2. .gitignore ✅ Da Committare
-Esclude file sensibili:
-- hsm_config.json (CRITICO)
-- File di output (.csv, .log)
-- Directory hsm_output/
-- File Python temporanei
-- File IDE e OS
+### 2. .gitignore ✅ To Commit
+Excludes sensitive files:
+- hsm_config.json (CRITICAL)
+- Output files (.csv, .log)
+- hsm_output/ directory
+- Temporary Python files
+- IDE and OS files
 
-### 3. README.md ✅ Da Committare
-Documentazione completa con:
-- Istruzioni di setup
-- Considerazioni di sicurezza
-- Guida all'uso
+### 3. README.md ✅ To Commit
+Complete documentation with:
+- Setup instructions
+- Security considerations
+- Usage guide
 - Troubleshooting
 
-### 4. SECURITY.md ✅ Da Committare
-Policy di sicurezza con:
+### 4. SECURITY.md ✅ To Commit
+Security policy with:
 - Best practices
-- Checklist pre-commit
-- Gestione leak accidentali
-- Tools di verifica
+- Pre-commit checklist
+- Accidental leak management
+- Verification tools
 
-### 5. PRE_COMMIT_CHECKLIST.md ✅ Da Committare
-Checklist operativa per ogni commit
+### 5. PRE_COMMIT_CHECKLIST.md ✅ To Commit
+Operational checklist for every commit
 
-### 6. pre-commit.example ✅ Da Committare
-Hook Git per controlli automatici
+### 6. pre-commit.example ✅ To Commit
+Git hook for automatic checks
 
-## 🔒 File da NON Committare
+## 🔒 Files NOT to Commit
 
-### hsm_config.json ❌ NON Committare
-File con configurazione reale contenente:
-- IP HSM reale (172.29.71.101)
-- Configurazioni sensibili
+### hsm_config.json ❌ DO NOT Commit
+File with real configuration containing:
+- Real HSM IP (172.29.71.101)
+- Sensitive configurations
 
-**Questo file deve rimanere LOCALE e NON deve finire su Git!**
+**This file must remain LOCAL and NEVER go to Git!**
 
-## ✅ Struttura Directory Finale
+## ✅ Final Directory Structure
 
 ```
 hsm_manager/
-├── HSM-manager.py              ✅ Codice senza IP hardcoded
-├── hsm_config.example.json     ✅ Template sicuro
-├── .gitignore                  ✅ Protegge file sensibili
-├── README.md                   ✅ Documentazione
-├── SECURITY.md                 ✅ Policy di sicurezza
-├── PRE_COMMIT_CHECKLIST.md     ✅ Guida operativa
-├── pre-commit.example          ✅ Hook automatico
-└── hsm_config.json             ❌ FILE LOCALE - NON COMMITTARE
+├── HSM-manager.py              ✅ Code without hardcoded IP
+├── hsm_config.example.json     ✅ Safe template
+├── .gitignore                  ✅ Protects sensitive files
+├── README.md                   ✅ Documentation
+├── SECURITY.md                 ✅ Security policy
+├── PRE_COMMIT_CHECKLIST.md     ✅ Operational guide
+├── pre-commit.example          ✅ Automatic hook
+└── hsm_config.json             ❌ LOCAL FILE - DO NOT COMMIT
 ```
 
-## 🚀 Prossimi Passi
+## 🚀 Next Steps
 
-### 1. Verifica Locale
+### 1. Local Verification
 ```bash
-# Testa che funzioni con il nuovo sistema
+# Test that it works with new system
 cp hsm_config.example.json hsm_config.json
-# Modifica hsm_config.json con i tuoi dati reali
+# Modify hsm_config.json with your real data
 python3 HSM-manager.py
 ```
 
@@ -133,56 +133,56 @@ python3 HSM-manager.py
 ```bash
 git init
 git add .
-# Verifica che hsm_config.json NON sia in stage
+# Verify hsm_config.json is NOT in stage
 git status
 ```
 
-### 3. Installa Pre-Commit Hook
+### 3. Install Pre-Commit Hook
 ```bash
 cp pre-commit.example .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
-### 4. Primo Commit
+### 4. First Commit
 ```bash
-git commit -m "Initial commit: HSM Manager con configurazione esterna"
+git commit -m "Initial commit: HSM Manager with external configuration"
 ```
 
-### 5. Push su Repository
+### 5. Push to Repository
 ```bash
 git remote add origin <your-repo-url>
 git branch -M main
 git push -u origin main
 ```
 
-## ⚠️ Promemoria Importanti
+## ⚠️ Important Reminders
 
-1. **PRIMA di ogni commit**: Verifica che hsm_config.json non sia in stage
-2. **PRIMA di ogni push**: Esegui la checklist completa
-3. **MAI hardcodare**: IP, password, token o chiavi nel codice
-4. **SEMPRE usare**: File di configurazione esterni per dati sensibili
+1. **BEFORE every commit**: Verify hsm_config.json is not in stage
+2. **BEFORE every push**: Execute complete checklist
+3. **NEVER hardcode**: IPs, passwords, tokens or keys in code
+4. **ALWAYS use**: External configuration files for sensitive data
 
-## 📊 Riepilogo Miglioramenti Sicurezza
+## 📊 Security Improvements Summary
 
-| Aspetto | Prima | Dopo |
-|---------|-------|------|
-| IP HSM | Hardcoded nel codice | File di configurazione esterno |
-| Configurazione | Nel codice sorgente | File JSON separato |
-| .gitignore | Assente | Completo e configurato |
-| Documentazione | Minima | Completa con security policy |
-| Pre-commit checks | Nessuno | Hook automatico disponibile |
-| File di esempio | Nessuno | Template disponibili |
+| Aspect | Before | After |
+|--------|--------|-------|
+| HSM IP | Hardcoded in code | External configuration file |
+| Configuration | In source code | Separate JSON file |
+| .gitignore | Missing | Complete and configured |
+| Documentation | Minimal | Complete with security policy |
+| Pre-commit checks | None | Automatic hook available |
+| Example files | None | Templates available |
 
-## ✨ Benefici delle Modifiche
+## ✨ Benefits of Changes
 
-1. **Sicurezza**: Nessun dato sensibile esposto su Git
-2. **Flessibilità**: Facile cambiare configurazione senza toccare il codice
-3. **Collaborazione**: Altri possono usare il codice con le loro configurazioni
-4. **Protezione**: Multiple barriere contro leak accidentali
-5. **Documentazione**: Istruzioni chiare per setup e sicurezza
+1. **Security**: No sensitive data exposed on Git
+2. **Flexibility**: Easy to change configuration without touching code
+3. **Collaboration**: Others can use code with their configurations
+4. **Protection**: Multiple barriers against accidental leaks
+5. **Documentation**: Clear instructions for setup and security
 
 ---
 
-**Versione Codice**: 2.1.0.0  
-**Data Modifiche**: 22 Gennaio 2026  
-**Stato**: ✅ PRONTO PER PUBBLICAZIONE SU GIT
+**Code Version**: 2.1.0.0  
+**Modification Date**: January 22, 2026  
+**Status**: ✅ READY FOR GIT PUBLICATION
