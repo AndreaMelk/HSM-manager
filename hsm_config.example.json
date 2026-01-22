@@ -1,0 +1,6 @@
+{
+  "hsm_ip": "YOUR_HSM_IP_HERE",
+  "hsm_port": 1500,
+  "output_path": "~/hsm_output",
+  "debug_mode": false
+}

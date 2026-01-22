@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+# Pre-commit hook per HSM Manager
+# Previene il commit accidentale di dati sensibili
+#
+# Per installare:
+# cp pre-commit.example .git/hooks/pre-commit
+# chmod +x .git/hooks/pre-commit
+
+echo "🔍 Controllo sicurezza pre-commit..."
+
+# Colori
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+ERRORS=0
+
+# 1. Controlla che hsm_config.json non sia committato
+if git diff --cached --name-only | grep -q "^hsm_config.json$"; then
+    echo -e "${RED}❌ ERRORE: Tentativo di commit di hsm_config.json!${NC}"
+    echo "   Questo file contiene informazioni sensibili (IP HSM)."
+    echo "   Rimuovilo dallo stage: git reset HEAD hsm_config.json"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# 2. Cerca IP privati nel codice (esclusi commenti ed esempi)
+if git diff --cached --diff-filter=ACM | grep -E "^\+" | grep -Ev "(#|//|/\*|\*|example|YOUR_.*_HERE)" | grep -qE "['\"]?1(0|72|92\.168)\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}['\"]?"; then
+    echo -e "${RED}❌ ERRORE: Rilevato IP privato hardcoded nel codice!${NC}"
+    echo "   Gli IP devono essere nel file di configurazione, non nel codice."
+    echo ""
+    echo "   IP trovati:"
+    git diff --cached --diff-filter=ACM | grep -E "^\+" | grep -Ev "(#|//|/\*|\*|example|YOUR_.*_HERE)" | grep -E "['\"]?1(0|72|92\.168)\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}['\"]?" | sed 's/^/   /'
+    ERRORS=$((ERRORS + 1))
+fi
+
+# 3. Cerca possibili password o token
+if git diff --cached --diff-filter=ACM | grep -Ei "^\+" | grep -Ev "(#|//|example)" | grep -qEi "(password|passwd|pwd|secret|token|api[_-]?key)['\"]?\s*[:=]\s*['\"][^'\"]{8,}"; then
+    echo -e "${YELLOW}⚠️  ATTENZIONE: Possibile password o token rilevato!${NC}"
+    echo "   Verifica che non ci siano credenziali hardcoded."
+    echo ""
+    git diff --cached --diff-filter=ACM | grep -Ei "^\+" | grep -Ev "(#|//|example)" | grep -Ei "(password|passwd|pwd|secret|token|api[_-]?key)" | sed 's/^/   /'
+    echo ""
+    read -p "   Sei sicuro di voler continuare? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        ERRORS=$((ERRORS + 1))
+    fi
+fi
+
+# 4. Verifica che .gitignore sia presente e contenga hsm_config.json
+if [ ! -f .gitignore ]; then
+    echo -e "${RED}❌ ERRORE: File .gitignore mancante!${NC}"
+    ERRORS=$((ERRORS + 1))
+elif ! grep -q "hsm_config.json" .gitignore; then
+    echo -e "${RED}❌ ERRORE: hsm_config.json non è nel .gitignore!${NC}"
+    ERRORS=$((ERRORS + 1))
+fi
+
+# 5. Verifica file di esempio
+if git diff --cached --name-only | grep -q "\.py$"; then
+    if [ ! -f hsm_config.example.json ]; then
+        echo -e "${YELLOW}⚠️  ATTENZIONE: File hsm_config.example.json mancante.${NC}"
+        echo "   Assicurati che ci sia un file di esempio per gli utenti."
+    fi
+fi
+
+# Riepilogo
+if [ $ERRORS -gt 0 ]; then
+    echo ""
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${RED}❌ COMMIT BLOCCATO: $ERRORS errore/i di sicurezza rilevato/i${NC}"
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo "Correggi gli errori e riprova."
+    echo "Se sei sicuro che sia un falso positivo, usa: git commit --no-verify"
+    exit 1
+else
+    echo -e "${GREEN}✅ Controlli di sicurezza superati!${NC}"
+    exit 0
+fi
