@@ -2,12 +2,6 @@
 
 Unified tool for PayShield HSM management with web interface.
 
-## ⚠️ IMPORTANT - SECURITY
-
-**NEVER commit the `hsm_config.json` file to Git!**
-
-This file contains sensitive HSM configuration information (IP addresses, ports, etc.) and **MUST** remain local.
-
 ## 🚀 Initial Setup
 
 ### 1. Clone the repository
@@ -137,18 +131,5 @@ Verify:
 ### Browser doesn't open automatically
 Open manually: `http://localhost:8080`
 
-## 📄 License
-
-[Specify appropriate license]
-
-## 👥 Contributing
-
-[Instructions for contributing to the project]
-
-## 📞 Support
-
-[Contact information or issue tracking]
-
----
 
 **Version:** 2.1.0.0
