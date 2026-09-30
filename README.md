@@ -6,7 +6,7 @@ Unified tool for PayShield HSM management with web interface.
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/AndreaMelk/HSM-manager.git
 cd hsm_manager
 ```
 
