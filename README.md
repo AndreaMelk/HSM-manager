@@ -2,7 +2,7 @@
 
 Unified tool for PayShield HSM management with web interface.
 
-## 🚀 Initial Setup
+## Initial Setup
 
 ### 1. Clone the repository
 ```bash
@@ -47,7 +47,7 @@ python3 HSM-manager.py
 
 The server will start on `http://localhost:8080` and automatically open your browser.
 
-## 📋 Features
+## Features
 
 ### Key Generation
 - Cryptographic key generation
@@ -71,7 +71,7 @@ The server will start on `http://localhost:8080` and automatically open your bro
 - Command execution statistics
 - Status dashboard
 
-## 🔒 Security Considerations
+## Security Considerations
 
 1. **Configuration file**: The `hsm_config.json` file contains sensitive information and MUST NOT be shared
 2. **Debug mode**: In production, keep `debug_mode: false`
@@ -79,7 +79,7 @@ The server will start on `http://localhost:8080` and automatically open your bro
 4. **HSM access**: Ensure only authorized users can run this tool
 5. **Network**: This tool connects directly to the HSM, verify network policies
 
-## 📁 File Structure
+## File Structure
 
 ```
 hsm_manager/
@@ -90,20 +90,20 @@ hsm_manager/
 └── README.md                   # This file
 ```
 
-## 🛠️ Requirements
+## Requirements
 
 - Python 3.6+
 - Network access to PayShield HSM
 - Operating System: Linux/macOS/Windows
 
-## 📝 CSV Templates
+## CSV Templates
 
 The tool includes CSV templates for:
 - Key generation: `Download Template` in Key Generation section
 - Key import: `Download Template` in Key Import section
 - Key export: `Download Template` in Key Export section
 
-## ⚙️ Advanced Configuration
+## Advanced Configuration
 
 ### Custom Port
 To use a different port than 8080:
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 ### Custom Output Path
 Modify `output_path` in `hsm_config.json` to change the output directory.
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error "Configuration file not found"
 Make sure you created `hsm_config.json` from `hsm_config.example.json`.
